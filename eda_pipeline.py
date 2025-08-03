@@ -42,7 +42,6 @@ class EDA:
             
             # Use the index from temp df to filter original df
             self.df = self.df.loc[df_temp.index]
-<<<<<<< HEAD
 
     def _convert_type(self):
         """
@@ -58,9 +57,6 @@ class EDA:
 
     # @ Main function to clean the DataFrame
     # Clean the DataFrame by removing NaN values and duplicates.    
-=======
-        
->>>>>>> parent of 989ebe4 (Update statistical report func)
     def _clean_data(self):
         """        
         Clean the DataFrame by removing NaN values and duplicates.
@@ -68,16 +64,11 @@ class EDA:
         """
         self.df.dropna(inplace=True, axis=0)
         self._drop_duplicates()
-<<<<<<< HEAD
         self._convert_type()
-=======
-        # self.df.drop_duplicates(inplace=True)
->>>>>>> parent of 989ebe4 (Update statistical report func)
         self.df.reset_index(drop=True, inplace=True)
 
-    def get_metadata(self):
+    def _get_statistics_overview_data(self):
         return {
-<<<<<<< HEAD
             'missing_values': [ (key, value) for key,value in self.df.isnull().sum().to_dict().items() if value > 0],
             'number_of_rows': self.df.shape[0],
             'number_of_columns': self.df.shape[1],
@@ -122,33 +113,11 @@ class EDA:
                 self.df[col_type_name] = self.df[col].apply(lambda x: np.min(x))
 
     def _create_label_columns(self, columns: List[str], type: str) -> None:
-=======
-            'columns': self.df.columns.tolist(),
-            'shape': self.df.shape,
-            'missing_values': self.df.isnull().sum().to_dict(),
-            'unique_values': {col: self.df[col].nunique() for col in self.df.columns}
-        }
-
-    def _get_columns_with_prefix(self, prefix: str = None) -> List[str]:
-        """
-        Get columns that start with a specific prefix or contain 'score'.
-        Args:
-            prefix (str): The prefix to filter columns by. If None, defaults to 'score'.
-        Returns:
-            list: A list of column names that match the criteria.
-        """
-        if prefix is None:
-            return [col for col in self.df.columns if 'score' in col.lower()]
-        return [col for col in self.df.columns if col.startswith(prefix) and 'score' in col.lower()]
-
-    def _create_label_columns(self, columns: List[str]) -> None:
->>>>>>> parent of 989ebe4 (Update statistical report func)
         """
         Create label columns based on the median value of specified columns.
         Args:
             columns (List[str]): A list of column names to create label columns for.
         """
-<<<<<<< HEAD
         type_value = None
         for col in columns:
             col_label = col + '_Label'
@@ -166,48 +135,29 @@ class EDA:
 
     # @ Main function to create label columns
     def _create_label_columns_from_prefix(self, type: str, prefix: str=None) -> None:
-=======
-        df = self.df.copy()
-        for col in columns:
-            col_label = col + '_Label'
-            median_value = df[col].median()
-            df[col_label] = np.where(df[col] >= median_value, 'Passed', 'Failed')
-            
-        self.df = df
-
-    def _create_label_columns_from_prefix(self, prefix: str=None) -> None:
->>>>>>> parent of 989ebe4 (Update statistical report func)
         """
         Create label columns based on the median value of columns that start with a specific prefix.
         Args:
             prefix (str): The prefix to filter columns by.
             If prefix is not provided, skip prefix filtering.
-<<<<<<< HEAD
         Calls:
             _create_label_columns: To create label columns based on the median value.
-=======
->>>>>>> parent of 989ebe4 (Update statistical report func)
         """
         columns = self.df.select_dtypes(include=['number']).columns.tolist()
         columns = [col for col in columns if "Score_for_answers" not in col]
-        print(f"Columns to create labels: {columns}")
         if not columns:
             raise ValueError(f"No columns found with prefix: {prefix}")
         
-        self._create_label_columns(columns)
+        self._create_label_columns(columns, type)
 
-    def run_pipeline(self, prefix: str=None) -> None:
+    def run_pipeline(self, type: str = 'median', prefix: str = None) -> None:
         print("Running EDA pipeline...")
         self._clean_data()
-<<<<<<< HEAD
         self._get_score_answers_type(type)
-        self._create_label_columns_from_prefix(type)
+        self._create_label_columns_from_prefix(type, prefix)
         self._get_statistics_report()
         # self._get_explicit_statistics_data()
 
-=======
-        self._create_label_columns_from_prefix(prefix)
->>>>>>> parent of 989ebe4 (Update statistical report func)
         print("EDA pipeline completed.")
 
     def get_dataframe(self):
