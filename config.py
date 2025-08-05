@@ -75,10 +75,10 @@ NUMERIC_FIELD_CONFIG = [
     "eip_img_scene_clutter_Score",
 
     "vqac_reason_depth_response",
-    "index",
 ]
 
 STR_FIELD_CONFIG = [
+    "index",
     'idp_Img_scene_type',
     'idp_Img_main_object',
     'idp_Image_mainobj_descrip',

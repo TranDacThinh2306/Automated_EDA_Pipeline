@@ -10,4 +10,4 @@ if __name__ == "__main__":
     # type is no use in this example, median will be used by default
     eda = EDA(data) 
     eda.run_pipeline()
-    print(eda.get_dataframe().to_csv('eda_output.csv', index=False))
+    

@@ -15,7 +15,8 @@ class Utils:
         df = pd.json_normalize(data, sep="_")
         return df[ETP_FIELD_CONFIG + EIP_FIELD_CONFIG + IDP_FIELD_CONFIG + VQAC_FIELD_CONFIG + wanted_col].copy()
 
-    def get_columns(self, pattern: str = None) -> list:
+    @staticmethod
+    def get_columns(pattern: str = None) -> list:
         """Return the list of parsing patterns."""
         if pattern == "ETP":
             return ETP_FIELD_CONFIG
@@ -25,7 +26,7 @@ class Utils:
             return IDP_FIELD_CONFIG
         elif pattern == "VQAC":
             return VQAC_FIELD_CONFIG
-        return [ETP_FIELD_CONFIG + EIP_FIELD_CONFIG + IDP_FIELD_CONFIG + VQAC_FIELD_CONFIG]
+        return ETP_FIELD_CONFIG + EIP_FIELD_CONFIG + IDP_FIELD_CONFIG + VQAC_FIELD_CONFIG
     
     def get_numeric_columns(self) -> list:
         """Return numeric columns from the DataFrame."""

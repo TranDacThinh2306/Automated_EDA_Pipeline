@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
-import sys
-from utils import Utils
 import json
 from typing import List
-sys.path.append('..')
+
+from utils import Utils
+from script import SceneTypeProcessor
+
+# sys.path.append('..')
 
 class EDA:
     def __init__(self, data: json, history: list = []):
@@ -15,8 +17,9 @@ class EDA:
             history (list): A list to keep track of operations performed.
         
         """
-        self.parser = Utils()
-        self.df = self.parser.convert_to_csv(data)
+        self.utils = Utils()
+        self.processor = SceneTypeProcessor()
+        self.df = self.utils.convert_to_csv(data)
         self.history = []
 
     def _drop_duplicates(self):
@@ -37,10 +40,7 @@ class EDA:
                     if isinstance(sample_val, (list, dict)):
                         df_temp[col] = df_temp[col].astype(str)
             
-            # Drop duplicates on the temp dataframe
             df_temp.drop_duplicates(inplace=True)
-            
-            # Use the index from temp df to filter original df
             self.df = self.df.loc[df_temp.index]
 
     def _convert_type(self):
@@ -49,10 +49,10 @@ class EDA:
         Numeric columns are converted to float, string columns are converted to str.
         """
         for col in self.df.columns:
-            if col in self.parser.get_numeric_columns():
+            if col in self.utils.get_numeric_columns():
                 self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
 
-            if col in self.parser.get_str_columns():
+            if col in self.utils.get_str_columns():
                 self.df[col] = self.df[col].astype(str)
 
     # @ Main function to clean the DataFrame
@@ -65,6 +65,7 @@ class EDA:
         self.df.dropna(inplace=True, axis=0)
         self._drop_duplicates()
         self._convert_type()
+        self.df.dropna(inplace=True, axis=0) # Việc này đảm bảo sau khi thực hiện convert không thực hiện dropna lại sẽ không có NaN nào còn sót lại
         self.df.reset_index(drop=True, inplace=True)
 
     def _get_statistics_overview_data(self):
@@ -144,18 +145,28 @@ class EDA:
             _create_label_columns: To create label columns based on the median value.
         """
         columns = self.df.select_dtypes(include=['number']).columns.tolist()
-        columns = [col for col in columns if "Score_for_answers" not in col]
         if not columns:
             raise ValueError(f"No columns found with prefix: {prefix}")
         
         self._create_label_columns(columns, type)
 
-    def run_pipeline(self, type: str = 'median', prefix: str = None) -> None:
+    def run(self, type: str = 'median', prefix: str = None) -> None:
         print("Running EDA pipeline...")
+
+        # Step 1: Data Cleaning
         self._clean_data()
+
+        # Step 2: Process scene types
+        self.df = self.processor.process(self.df)
+
+        # Step 3: Specialized 
         self._get_score_answers_type(type)
+
+        # Step 4: Labelize numeric columns with median threshold
         self._create_label_columns_from_prefix(type, prefix)
-        self._get_statistics_report()
+
+        # Step 5: Generate statistics report pdf file (Optional)
+        # self._get_statistics_report()
         # self._get_explicit_statistics_data()
 
         print("EDA pipeline completed.")
