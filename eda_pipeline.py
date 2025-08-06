@@ -57,7 +57,8 @@ class EDA:
                 self.df[col] = self.df[col].astype(str)
 
             if col in self.utils.get_list_columns():
-                self.df[col] = self.df[col].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+                if isinstance(self.df.loc[0, col], str):
+                    self.df[col] = self.df[col].apply(lambda x: ast.literal_eval(x))
 
     # @ Main function to clean the DataFrame
     # Clean the DataFrame by removing NaN values and duplicates.    
