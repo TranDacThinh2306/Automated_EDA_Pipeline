@@ -44,21 +44,36 @@ class EDA:
             df_temp.drop_duplicates(inplace=True)
             self.df = self.df.loc[df_temp.index]
 
-    def _convert_type(self):
+    def _filter_invalid(self):
         """
         Convert columns to appropriate types.
-        Numeric columns are converted to float, string columns are converted to str.
+        Filters out rows where list columns are valid.
         """
-        for col in self.df.columns:
-            if col in self.utils.get_numeric_columns():
-                self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
 
-            if col in self.utils.get_str_columns():
-                self.df[col] = self.df[col].astype(str)
+        def is_invalid_row(row):
+            try:
+                row_lists = row.tolist()
 
-            if col in self.utils.get_list_columns():
-                if isinstance(self.df.loc[0, col], str):
-                    self.df[col] = self.df[col].apply(lambda x: ast.literal_eval(x))
+                if not all(isinstance(x, list) for x in row_lists):
+                    return True
+
+                if any(len(x) == 0 for x in row_lists):
+                    return True
+                
+                lengths = [len(x) for x in row_lists]
+                return len(set(lengths)) != 1  # True nếu độ dài không đều
+
+            except Exception:
+                return True  # Nếu có lỗi thì cũng coi như không hợp lệ
+            
+        for col in self.utils.get_numeric_columns():
+            self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
+
+        for col in self.utils.get_str_columns():
+            self.df[col] = self.df[col].astype(str)
+
+        mask = self.df[self.utils.get_list_columns()[:5]].apply(is_invalid_row, axis=1)
+        self.df = self.df[~mask]
 
     # @ Main function to clean the DataFrame
     # Clean the DataFrame by removing NaN values and duplicates.    
@@ -69,7 +84,7 @@ class EDA:
         """
         self.df.dropna(inplace=True, axis=0)
         self._drop_duplicates()
-        self._convert_type()
+        self._filter_invalid()
         self.df.dropna(inplace=True, axis=0) # Việc này đảm bảo sau khi thực hiện convert không thực hiện dropna lại sẽ không có NaN nào còn sót lại
         self.df.reset_index(drop=True, inplace=True)
 
@@ -164,7 +179,7 @@ class EDA:
         # Step 2: Process scene types
         self.df = self.processor.process(self.df)
 
-        # Step 3: Specialized 
+        # Step 3: Process to get score answers based on the specified type 
         self._get_score_answers_type(type)
 
         # Step 4: Labelize numeric columns with median threshold
