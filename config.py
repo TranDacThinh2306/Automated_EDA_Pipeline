@@ -104,3 +104,21 @@ STR_FIELD_CONFIG = [
     'vqac_guess_the_answer_reason',
     'vqac_reason_depth_reason',
 ]
+
+LIST_FIELD_CONFIG = [
+    "etp_txt_grammar_Score_for_answers",
+    "etp_txt_unambiguity_Score_for_answers",
+    "etp_txt_qa_structure_Score_for_answers",
+    "etp_syntactic_complexity_Score_for_answers",
+    "etp_language_naturalness_Score_for_answers"
+    "etp_txt_grammar_Reason_for_answers",
+    "etp_txt_unambiguity_Reason_for_answers",
+    "etp_txt_qa_structure_Reason_for_answers",
+    "etp_syntactic_complexity_Reason_for_answers",
+    "etp_language_naturalness_Reason_for_answers",
+
+    "vqac_answer_to_image_response",
+    "vqac_answer_to_image_reason",
+    "vqac_question_to_answer_response",
+    "vqac_question_to_answer_reason"
+]

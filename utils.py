@@ -1,6 +1,14 @@
-from config import ETP_FIELD_CONFIG, EIP_FIELD_CONFIG, IDP_FIELD_CONFIG, VQAC_FIELD_CONFIG, NUMERIC_FIELD_CONFIG, STR_FIELD_CONFIG
 import pandas as pd
 import json
+from config import (
+    ETP_FIELD_CONFIG, 
+    EIP_FIELD_CONFIG, 
+    IDP_FIELD_CONFIG, 
+    VQAC_FIELD_CONFIG, 
+    NUMERIC_FIELD_CONFIG, 
+    STR_FIELD_CONFIG, 
+    LIST_FIELD_CONFIG, 
+    )
 
 class Utils:
     """
@@ -35,3 +43,7 @@ class Utils:
     def get_str_columns(self) -> list:
         """Return string columns from the DataFrame."""
         return STR_FIELD_CONFIG
+    
+    def get_list_columns(self) -> list:
+        """Return list columns from the DataFrame."""
+        return LIST_FIELD_CONFIG

@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import json
+import ast
 from typing import List
 
 from utils import Utils
@@ -36,7 +37,7 @@ class EDA:
             for col in df_temp.columns:
                 if df_temp[col].dtype == 'object':
                     # Check if column contains lists or dicts
-                    sample_val = df_temp[col].dropna().iloc[0] if not df_temp[col].dropna().empty else None
+                    sample_val = df_temp.loc[0,col]
                     if isinstance(sample_val, (list, dict)):
                         df_temp[col] = df_temp[col].astype(str)
             
@@ -54,6 +55,9 @@ class EDA:
 
             if col in self.utils.get_str_columns():
                 self.df[col] = self.df[col].astype(str)
+
+            if col in self.utils.get_list_columns():
+                self.df[col] = self.df[col].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
 
     # @ Main function to clean the DataFrame
     # Clean the DataFrame by removing NaN values and duplicates.    
