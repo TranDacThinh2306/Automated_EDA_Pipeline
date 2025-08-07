@@ -1,5 +1,7 @@
 import pandas as pd
 import json
+import os
+
 from config import (
     ETP_FIELD_CONFIG, 
     EIP_FIELD_CONFIG, 
@@ -16,7 +18,7 @@ class Utils:
     """
     def __init__(self):
         """Initialize utils with field configurations."""
-        self.patterns = [ETP_FIELD_CONFIG, EIP_FIELD_CONFIG, IDP_FIELD_CONFIG, VQAC_FIELD_CONFIG]
+        patterns = [ETP_FIELD_CONFIG, EIP_FIELD_CONFIG, IDP_FIELD_CONFIG, VQAC_FIELD_CONFIG]
 
     def convert_to_csv(self, data: json, wanted_col: list = ['index']) -> pd.DataFrame:
         """Apply all patterns to parse the DataFrame."""
