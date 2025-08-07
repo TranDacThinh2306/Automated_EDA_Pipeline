@@ -154,7 +154,7 @@ class EDA:
                 numeric_columns = self.df.select_dtypes(include='number').columns
                 list_columns = self.utils.get_list_columns()
                 str_columns = [col for col in self.df.select_dtypes(include='object').columns if col not in list_columns]
-
+                label_columns = [col for col in self.df.columns if col.endswith('_Label')]
 
                 # Write statistics to different sheets
 
@@ -170,6 +170,9 @@ class EDA:
                 expl_stats_df[list_columns] \
                     .to_excel(writer, sheet_name='List', index=True)
                 
+                expl_stats_df[label_columns] \
+                    .to_excel(writer, sheet_name='Labels', index=True)
+
                 SceneTypeProcessor.generate_report(self.df) \
                     .to_excel(writer, sheet_name='Scene_Types', index=True)
                 
