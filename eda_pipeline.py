@@ -69,6 +69,9 @@ class EDA:
         for col in self.utils.get_str_columns():
             self.df[col] = self.df[col].astype(str)
 
+        # Nếu xét trên toàn bộ list đều phải có số lượng đồng đều, mask sẽ bao gồm thêm những dữ liệu không hợp lệ
+        # mask = self.df[self.utils.get_list_columns()].apply(is_invalid_row, axis=1)
+
         mask = self.df[self.utils.get_list_columns()[:5]].apply(is_invalid_row, axis=1)
         self.df = self.df[~mask]
 
@@ -80,8 +83,11 @@ class EDA:
         Handles columns with lists by converting to string for duplicate detection.
         """
         self.df.dropna(inplace=True, axis=0)
+        self.df.reset_index(drop=True, inplace=True)
+
         self._drop_duplicates()
         self._filter_invalid()
+
         self.df.dropna(inplace=True, axis=0) # Việc này đảm bảo sau khi thực hiện convert không thực hiện dropna lại sẽ không có NaN nào còn sót lại
         self.df.reset_index(drop=True, inplace=True)
 
